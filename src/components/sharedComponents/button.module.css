@@ -1,0 +1,21 @@
+/* Button.module.css */
+.button {
+  padding: 5px 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+  color: white;
+}
+
+.add {
+  background-color: rgb(245, 122, 91);
+}
+
+.edit {
+  background-color: rgb(17, 11, 99);
+}
+
+.delete {
+  background-color: rgb(255, 201, 101);
+}
