@@ -1,13 +1,22 @@
 import React from "react";
-import { RecipeProps } from "../../App";
+import { Recipe } from "../../App";
 import { Button } from "../sharedComponents";
+import Ingredient from "./Ingredient";
+import styles from "./recipeCard.module.css";
 interface RecipeCardProps {
   id: string;
   name: string;
   ingredients: string[];
   deleteRecipe: (payload: string) => void;
   setEditRecipe: (value: boolean) => void;
-  setRecipe: (value: RecipeProps) => void;
+  setRecipe: (value: Recipe) => void;
+
+  deleteIngredient: (id: string, index: number) => void;
+  updateIngredient: (
+    id: string,
+    index: number,
+    ingredientValue: string
+  ) => void;
 }
 const RecipeCard: React.FC<RecipeCardProps> = ({
   id,
@@ -16,6 +25,9 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
   deleteRecipe,
   setEditRecipe,
   setRecipe,
+
+  deleteIngredient,
+  updateIngredient,
 }) => {
   const ingredientList = ingredients;
   const handleEditRecipe = () => {
@@ -31,17 +43,32 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
     deleteRecipe(payload);
   };
   return (
-    <div>
-      <div>
-        <p>{name}</p>
-        <Button label="Edit" onClick={handleEditRecipe} />
-        <Button label="Delete" onClick={handleDeleteRecipe} />
+    <div className={styles.container}>
+      <div className={styles.title}>
+        <h1 style={{ color: "orangered", fontSize: "14px" }}>{name}</h1>
+        <div style={{ display: "flex" }}>
+          <Button label="Edit" onClick={handleEditRecipe} />
+          <Button label="Delete" onClick={handleDeleteRecipe} />
+        </div>
       </div>
       <div>
         {ingredientList.length > 0 &&
-          ingredientList.map((i) => {
-            return <div>{i}</div>;
-          }, [])}
+          ingredientList
+            .filter((i, index) => {
+              return i !== "";
+            })
+            .map((i, index) => {
+              return (
+                <Ingredient
+                  key={index}
+                  index={index}
+                  id={id}
+                  ingredient={i}
+                  deleteIngredient={deleteIngredient}
+                  updateIngredient={updateIngredient}
+                />
+              );
+            }, [])}
       </div>
     </div>
   );

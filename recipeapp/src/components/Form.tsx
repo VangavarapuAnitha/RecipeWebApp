@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Input, Button } from "./sharedComponents";
 import { v4 as uuid } from "uuid";
-import { Recipe, RecipeProps } from "../App";
+import { Recipe } from "../App";
+
 interface FormProps {
   addRecipe: (payload: Recipe) => void;
   editRecipe: boolean;
-  recipe: RecipeProps;
-  updateRecipe: (payload: RecipeProps) => void;
+  recipe: Recipe;
+  updateRecipe: (payload: Recipe) => void;
 }
 const Form: React.FC<FormProps> = ({
   addRecipe,
@@ -22,18 +23,6 @@ const Form: React.FC<FormProps> = ({
       setIngredients(recipe.ingredients.join(","));
     }
   }, [editRecipe]);
-  // useEffect(() => {
-  //   if (editRecipe) {
-  //     const payload = {
-  //       id: recipe.id,
-  //       name: recipeName,
-  //       ingredients: ingreditents.split(","),
-  //     };
-  //     updateRecipe(payload);
-  //     setRecipeName("");
-  //     setIngredients("");
-  //   }
-  // }, [editRecipe]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -41,20 +30,37 @@ const Form: React.FC<FormProps> = ({
     else setIngredients(value);
   };
   const handleSubmit = () => {
-    const payload = {
-      recipe: {
+    if (editRecipe) {
+      updateRecipe({
+        id: recipe.id,
+        name: recipeName,
+        ingredients: ingreditents.split(","),
+      });
+    } else {
+      const payload = {
         id: uuid(),
         name: recipeName,
         ingredients: ingreditents.split(","),
-      },
-    };
+      };
 
-    addRecipe(payload);
+      addRecipe(payload);
+    }
+
     setRecipeName("");
     setIngredients("");
   };
   return (
-    <div>
+    <div style={{ width: "20%" }}>
+      <p
+        style={{
+          fontSize: "14px",
+          fontWeight: "bold",
+          textAlign: "center",
+          color: "orangered",
+        }}
+      >
+        {editRecipe ? "Update Recipe" : "Add Recipe"}
+      </p>
       <Input
         label="Recipe Name"
         name="recipeName"
@@ -67,7 +73,7 @@ const Form: React.FC<FormProps> = ({
         value={ingreditents}
         onChange={handleChange}
       />
-      <Button label="Add" onClick={handleSubmit} />
+      <Button label={editRecipe ? "Update" : "Add"} onClick={handleSubmit} />
     </div>
   );
 };
