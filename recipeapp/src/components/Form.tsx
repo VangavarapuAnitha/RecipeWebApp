@@ -9,6 +9,10 @@ interface FormProps {
   recipe: Recipe;
   updateRecipe: (payload: Recipe) => void;
 }
+interface RecipeErrors {
+  recipeName?: string;
+  ingredients?: string;
+}
 const Form: React.FC<FormProps> = ({
   addRecipe,
   editRecipe,
@@ -17,6 +21,7 @@ const Form: React.FC<FormProps> = ({
 }) => {
   const [recipeName, setRecipeName] = useState<string>("");
   const [ingreditents, setIngredients] = useState<string>("");
+  const [errors, setErrors] = useState<RecipeErrors>({});
   useEffect(() => {
     if (editRecipe) {
       setRecipeName(recipe.name);
@@ -29,7 +34,28 @@ const Form: React.FC<FormProps> = ({
     if (name === "recipeName") setRecipeName(value);
     else setIngredients(value);
   };
+  const validateRecipe = (
+    recipeName: string,
+    ingredients: string
+  ): RecipeErrors => {
+    const errors: RecipeErrors = {};
+    if (!recipeName.trim()) {
+      errors.recipeName = "RecipeName is required";
+    } else if (!recipeName.match(/^[a-zA-Z]+$/)) {
+      errors.recipeName = "Invalid RecipeName(only alphabets are allowed)";
+    }
+    if (!ingredients.trim()) {
+      errors.ingredients = "At least one ingredient requierd";
+    } else if (!ingredients.match(/^([a-zA-Z]+\s?,?\s?)+$/)) {
+      errors.ingredients =
+        "Invalid ingredients(only alphabets are allowed seperated by comma)";
+    }
+    return errors;
+  };
   const handleSubmit = () => {
+    const errors = validateRecipe(recipeName, ingreditents);
+    setErrors(errors);
+    if (Object.keys(errors).length !== 0) return;
     if (editRecipe) {
       updateRecipe({
         id: recipe.id,
@@ -66,12 +92,14 @@ const Form: React.FC<FormProps> = ({
         name="recipeName"
         value={recipeName}
         onChange={handleChange}
+        message={errors.recipeName ? errors.recipeName : undefined}
       />
       <Input
         label="Ingredients"
         name="ingreditents"
         value={ingreditents}
         onChange={handleChange}
+        message={errors.ingredients ? errors.ingredients : undefined}
       />
       <Button label={editRecipe ? "Update" : "Add"} onClick={handleSubmit} />
     </div>

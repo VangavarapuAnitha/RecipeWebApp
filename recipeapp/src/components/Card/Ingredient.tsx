@@ -30,7 +30,11 @@ const Ingredient: React.FC<IngredientProps> = ({
     deleteIngredient(id, index);
   };
   const handleUpdateIngredient = () => {
-    if (ingredientValue === "") {
+    if (
+      ingredientValue === "" ||
+      !ingredientValue.trim() ||
+      !ingredientValue.match(/^[a-zA-Z]+$/)
+    ) {
       setError(true);
     } else {
       setError(false);
