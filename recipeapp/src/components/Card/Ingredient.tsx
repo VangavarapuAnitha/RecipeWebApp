@@ -33,7 +33,7 @@ const Ingredient: React.FC<IngredientProps> = ({
     if (
       ingredientValue === "" ||
       !ingredientValue.trim() ||
-      !ingredientValue.match(/^[a-zA-Z]+$/)
+      !ingredientValue.match(/^[\s?a-zA-Z]+$/)
     ) {
       setError(true);
     } else {

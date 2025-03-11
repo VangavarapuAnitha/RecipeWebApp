@@ -1,11 +1,11 @@
 import React from "react";
 import { RecipeState, Recipe } from "../App";
 import { RecipeCard } from "./Card";
-interface RecipeListProps {
-  recipes: RecipeState;
+interface RecipeListProps<T> {
+  recipes: RecipeState<T>;
   deleteRecipe: (payload: string) => void;
   setEditRecipe: (value: boolean) => void;
-  setRecipe: (value: Recipe) => void;
+  setRecipe: (value: T) => void;
 
   deleteIngredient: (id: string, index: number) => void;
   updateIngredient: (
@@ -14,7 +14,7 @@ interface RecipeListProps {
     ingredientValue: string
   ) => void;
 }
-const RecipeList: React.FC<RecipeListProps> = ({
+const RecipeList: React.FC<RecipeListProps<Recipe<string>>> = ({
   recipes,
   deleteRecipe,
   setEditRecipe,

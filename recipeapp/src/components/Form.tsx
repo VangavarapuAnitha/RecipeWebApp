@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { Input, Button } from "./sharedComponents";
+import { Input, Button, Dropdown } from "./sharedComponents";
 import { v4 as uuid } from "uuid";
 import { Recipe } from "../App";
-
-interface FormProps {
-  addRecipe: (payload: Recipe) => void;
+import { OptionItem } from "../components/sharedComponents/Dropdown";
+interface FormProps<T> {
+  addRecipe: (payload: T) => void;
   editRecipe: boolean;
-  recipe: Recipe;
-  updateRecipe: (payload: Recipe) => void;
+  recipe: T;
+  updateRecipe: (payload: T) => void;
 }
-interface RecipeErrors {
-  recipeName?: string;
-  ingredients?: string;
+
+interface RecipeErrors<T> {
+  recipeName?: T;
+  ingredients?: T;
 }
-const Form: React.FC<FormProps> = ({
+
+const Form: React.FC<FormProps<Recipe<string>>> = ({
   addRecipe,
   editRecipe,
   recipe,
@@ -21,7 +23,7 @@ const Form: React.FC<FormProps> = ({
 }) => {
   const [recipeName, setRecipeName] = useState<string>("");
   const [ingreditents, setIngredients] = useState<string>("");
-  const [errors, setErrors] = useState<RecipeErrors>({});
+  const [errors, setErrors] = useState<RecipeErrors<string>>({});
   useEffect(() => {
     if (editRecipe) {
       setRecipeName(recipe.name);
@@ -37,8 +39,8 @@ const Form: React.FC<FormProps> = ({
   const validateRecipe = (
     recipeName: string,
     ingredients: string
-  ): RecipeErrors => {
-    const errors: RecipeErrors = {};
+  ): RecipeErrors<string> => {
+    const errors: RecipeErrors<string> = {};
     if (!recipeName.trim()) {
       errors.recipeName = "RecipeName is required";
     } else if (!recipeName.match(/^[a-zA-Z]+$/)) {
@@ -75,6 +77,13 @@ const Form: React.FC<FormProps> = ({
     setRecipeName("");
     setIngredients("");
   };
+  const state: OptionItem<string>[] = [
+    { value: "ap", label: "AP" },
+    { value: "t", label: "Tel" },
+  ];
+  console.log(typeof state);
+  // const country: Array<string> = ["Ind", "US", "Pak"];
+  // const countrynum: Array<number> = [91, 1];
   return (
     <div style={{ width: "20%" }}>
       <p
@@ -87,20 +96,24 @@ const Form: React.FC<FormProps> = ({
       >
         {editRecipe ? "Update Recipe" : "Add Recipe"}
       </p>
-      <Input
+      <Input<string>
         label="Recipe Name"
         name="recipeName"
         value={recipeName}
         onChange={handleChange}
         message={errors.recipeName ? errors.recipeName : undefined}
       />
-      <Input
+      <Input<string>
         label="Ingredients"
-        name="ingreditents"
+        name={ingreditents}
         value={ingreditents}
         onChange={handleChange}
         message={errors.ingredients ? errors.ingredients : undefined}
       />
+      <Dropdown<string> options={state} />
+      {/* <Dropdown<string> items={country} /> */}
+      {/* <Dropdown<number> items={countrynum} /> */}
+
       <Button label={editRecipe ? "Update" : "Add"} onClick={handleSubmit} />
     </div>
   );

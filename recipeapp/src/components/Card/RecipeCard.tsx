@@ -3,13 +3,13 @@ import { Recipe } from "../../App";
 import { Button } from "../sharedComponents";
 import Ingredient from "./Ingredient";
 import styles from "./recipeCard.module.css";
-interface RecipeCardProps {
-  id: string;
-  name: string;
-  ingredients: string[];
-  deleteRecipe: (payload: string) => void;
+interface RecipeCardProps<T> {
+  id: T;
+  name: T;
+  ingredients: T[];
+  deleteRecipe: (payload: T) => void;
   setEditRecipe: (value: boolean) => void;
-  setRecipe: (value: Recipe) => void;
+  setRecipe: (value: Recipe<T>) => void;
 
   deleteIngredient: (id: string, index: number) => void;
   updateIngredient: (
@@ -18,7 +18,7 @@ interface RecipeCardProps {
     ingredientValue: string
   ) => void;
 }
-const RecipeCard: React.FC<RecipeCardProps> = ({
+const RecipeCard: React.FC<RecipeCardProps<string>> = ({
   id,
   name,
   ingredients,
@@ -28,7 +28,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
 
   deleteIngredient,
   updateIngredient,
-}) => {
+}: RecipeCardProps<string>) => {
   const ingredientList = ingredients;
   const handleEditRecipe = () => {
     setEditRecipe(true);

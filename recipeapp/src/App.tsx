@@ -1,37 +1,37 @@
 import React, { useReducer, Reducer, useState } from "react";
 import Form from "./components/Form";
 import RecipeList from "./components/RecipeList";
-export interface Recipe {
-  id: string;
-  name: string;
-  ingredients: string[];
+export interface Recipe<T> {
+  id: T;
+  name: T;
+  ingredients: T[];
 }
 
-export interface RecipeState {
-  recipes: Recipe[];
+export interface RecipeState<T> {
+  recipes: T[];
 }
 
-type RecipeActionType =
+type RecipeActionType<T, U> =
   | {
       type: "add";
-      payload: Recipe;
+      payload: Recipe<T>;
     }
-  | { type: "delete"; payload: string }
-  | { type: "edit"; payload: Recipe }
-  | { type: "deleteIngredient"; payload: { id: string; index: number } }
+  | { type: "delete"; payload: T }
+  | { type: "edit"; payload: Recipe<T> }
+  | { type: "deleteIngredient"; payload: { id: T; index: U } }
   | {
       type: "updateIngredient";
-      payload: { id: string; index: number; ingredientValue: string };
+      payload: { id: T; index: U; ingredientValue: T };
     };
 
-const initialState: RecipeState = {
+const initialState: RecipeState<Recipe<string>> = {
   recipes: [],
 };
 
-const recipeReducer: Reducer<RecipeState, RecipeActionType> = (
-  state,
-  action
-): RecipeState => {
+const recipeReducer: Reducer<
+  RecipeState<Recipe<string>>,
+  RecipeActionType<string, number>
+> = (state, action): RecipeState<Recipe<string>> => {
   switch (action.type) {
     case "add":
       return { ...state, recipes: [...state.recipes, action.payload] };
@@ -107,12 +107,12 @@ const App: React.FC = () => {
   const [recipes, dispatch] = useReducer(recipeReducer, initialState);
   const [editRecipe, setEditRecipe] = useState<boolean>(false);
 
-  const [recipe, setRecipe] = useState<Recipe>({
+  const [recipe, setRecipe] = useState<Recipe<string>>({
     id: "",
     name: "",
     ingredients: [],
   });
-  function addRecipe(payload: Recipe) {
+  function addRecipe<T extends string>(payload: Recipe<T>) {
     dispatch({ type: "add", payload: payload });
   }
   function deleteRecipe(payload: string) {
@@ -121,7 +121,7 @@ const App: React.FC = () => {
       payload: payload,
     });
   }
-  function updateRecipe(payload: Recipe) {
+  function updateRecipe(payload: Recipe<string>) {
     dispatch({ type: "edit", payload: payload });
     setEditRecipe(false);
   }
@@ -129,10 +129,10 @@ const App: React.FC = () => {
     console.log(id, index);
     dispatch({ type: "deleteIngredient", payload: { id: id, index: index } });
   }
-  function updateIngredient(
-    id: string,
+  function updateIngredient<T extends string>(
+    id: T,
     index: number,
-    ingredientValue: string
+    ingredientValue: T
   ) {
     dispatch({
       type: "updateIngredient",
